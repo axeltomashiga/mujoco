@@ -1,0 +1,62 @@
+<mujoco model="planar_2dof_arm">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.005" gravity="0 0 -9.81" iterations="50" solver="Newton" tolerance="1e-10"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="140" elevation="-25"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4"/>
+    <material name="grid_mat" texture="grid" texrepeat="1 1" texuniform="true" reflectance="0.2"/>
+    <material name="metal_gray" rgba="0.7 0.7 0.75 1.0" metallic="0.8" roughness="0.3"/>
+    <material name="arm_blue" rgba="0.1 0.5 0.9 1.0" metallic="0.5" roughness="0.4"/>
+    <material name="arm_orange" rgba="0.95 0.55 0.1 1.0" metallic="0.5" roughness="0.4"/>
+    <material name="ee_red" rgba="0.9 0.1 0.1 1.0" metallic="0.3" roughness="0.2"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3"/>
+    <geom name="floor" type="plane" size="3 3 0.1" material="grid_mat"/>
+
+    <!-- Base Pedestal -->
+    <body name="base" pos="0 0 0.5">
+      <geom name="base_geom" type="cylinder" size="0.08 0.5" material="metal_gray" pos="0 0 -0.25"/>
+
+      <!-- Link 1 (Joint 1 rotates around Y-axis) -->
+      <body name="link1" pos="0 0 0">
+        <joint name="joint1" type="hinge" axis="0 1 0" range="-3.14 3.14" damping="0.5"/>
+        <geom name="j1_cylinder" type="cylinder" size="0.06 0.05" zaxis="0 1 0" material="metal_gray"/>
+        <geom name="link1_geom" type="capsule" fromto="0 0 0 0.4 0 0" size="0.04" material="arm_blue"/>
+
+        <!-- Link 2 (Joint 2 rotates around Y-axis) -->
+        <body name="link2" pos="0.4 0 0">
+          <joint name="joint2" type="hinge" axis="0 1 0" range="-3.14 3.14" damping="0.3"/>
+          <geom name="j2_cylinder" type="cylinder" size="0.05 0.04" zaxis="0 1 0" material="metal_gray"/>
+          <geom name="link2_geom" type="capsule" fromto="0 0 0 0.35 0 0" size="0.03" material="arm_orange"/>
+
+          <!-- End Effector -->
+          <body name="end_effector" pos="0.35 0 0">
+            <geom name="ee_geom" type="sphere" size="0.045" material="ee_red"/>
+            <site name="ee_site" pos="0 0 0" size="0.01"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="actuator1" joint="joint1" gear="1" ctrllimited="true" ctrlrange="-50 50"/>
+    <motor name="actuator2" joint="joint2" gear="1" ctrllimited="true" ctrlrange="-30 30"/>
+  </actuator>
+
+  <sensor>
+    <jointpos name="j1_pos" joint="joint1"/>
+    <jointvel name="j1_vel" joint="joint1"/>
+    <jointpos name="j2_pos" joint="joint2"/>
+    <jointvel name="j2_vel" joint="joint2"/>
+  </sensor>
+</mujoco>

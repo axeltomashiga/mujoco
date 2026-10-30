@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mujoco_ros2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: mujoco_ros2_container
+    network_mode: "host"
+    ipc: "host" # Crucial para DDS Shared Memory (SHM) entre nodos
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - ROS_DOMAIN_ID=42
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=file:///ros2_ws/config/cyclonedds.xml
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./src:/ros2_ws/src
+      - ./config:/ros2_ws/config
+      - ./models:/ros2_ws/models
+    stdin_open: true
+    tty: true
+    command: ros2 launch mujoco_ros2_sim full_demo.launch.py

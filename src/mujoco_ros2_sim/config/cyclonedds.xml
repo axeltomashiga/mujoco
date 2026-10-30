@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Configuracion de Eclipse CycloneDDS para MuJoCo + ROS 2
+  Uso: export CYCLONEDDS_URI=file://$(pwd)/config/cyclonedds.xml
+       export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+-->
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+    <Domain id="any">
+        <General>
+            <!-- Permite comunicacion local rapida via loopback o interfaces activas -->
+            <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+            <AllowMulticast>true</AllowMulticast>
+        </General>
+        
+        <Internal>
+            <!-- Tamano optimizado de buffers para streaming de fisica a alta frecuencia (>100Hz) -->
+            <SocketReceiveBufferSize min="1048576"/>
+            <Watermarks>
+                <Whirlpool>
+                    <High>1048576</High>
+                    <Low>262144</Low>
+                </Whirlpool>
+            </Watermarks>
+        </Internal>
+        
+        <Tracing>
+            <Verbosity>warning</Verbosity>
+            <OutputFile>cdds.log</OutputFile>
+        </Tracing>
+    </Domain>
+</CycloneDDS>

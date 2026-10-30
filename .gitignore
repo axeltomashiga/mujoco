@@ -1,0 +1,17 @@
+# ROS 2 build directories
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+.venv/
+
+# MuJoCo / DDS logs
+cdds.log
+*.log
